@@ -123,6 +123,16 @@ def main():
     # Resolucion DNS y verificacion HTTP
     subdomain_data = {}
     active_subdomains = {}
+    # ---
+    # Resolucion DNS y verificacion HTTP de subdominios encontrados.
+    # Se utiliza ThreadPoolExecutor para realizar consultas DNS y comprobaciones HTTP en paralelo,
+    # acelerando el proceso para grandes listas de subdominios.
+    # Para cada subdominio:
+    #   - Se resuelve la IP y el CNAME (si existe).
+    #   - Si la IP es valida, se realiza una peticion HTTP para verificar si el subdominio responde.
+    #   - Se almacena la informacion (IP, CNAME, codigo HTTP) en subdomain_data.
+    #   - Si el subdominio responde (codigo HTTP < 600), se agrega a active_subdomains.
+    # ---
     with ThreadPoolExecutor(max_workers=20) as executor:
         future_to_sub = {executor.submit(dns_resolve, sub): sub for sub in all_subdomains}
         for future in as_completed(future_to_sub):
