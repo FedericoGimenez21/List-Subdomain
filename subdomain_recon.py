@@ -39,7 +39,7 @@ def check_tool(cmd, name):
         logging.warning(f"Herramienta no disponible: {name} ({e})")
         return False
 
-def run_command(cmd, name, timeout=60):
+def run_command(cmd, name, timeout=300):
     """Ejecuta un comando y retorna la salida."""
     try:
         result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout, text=True)
@@ -98,11 +98,11 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
     timestamp = get_timestamp()
     tools = {
-        "subscraper": (f"python3 subscraper.py -d {domain} -r -http -cname", ["python3", "subscraper.py"]),
+        "subscraper": (f"python3 subscraper/subscraper/subscraper.py -d {domain} -silent -active", ["python3", "subscraper.py"]),
         "subfinder": (f"subfinder -d {domain} -all -silent", ["subfinder"]),
-        "amass": (f"amass enum -passive -d {domain}", ["amass"]),
+        #"amass": (f"amass enum -passive -d {domain}", ["amass"]),
         "assetfinder": (f"assetfinder --subs-only {domain}", ["assetfinder"]),
-        "sublist3r": (f"python sublist3r.py -d {domain}", ["python", "sublist3r.py"]),
+        "sublist3r": (f"sublist3r.py -d {domain}", ["python", "sublist3r"]),
     }
     available_tools = []
     all_subdomains = set()
@@ -111,6 +111,7 @@ def main():
             logging.info(f"Ejecutando {name}...")
             out = run_command(cmd, name)
             found = set(line.strip() for line in out.splitlines() if line.strip() and domain in line)
+            logging.info(f"{name}: {len(found)} subdominios encontrados tras la ejecucion.")
             all_subdomains.update(found)
             available_tools.append(name)
         else:
