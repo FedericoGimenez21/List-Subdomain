@@ -102,7 +102,7 @@ def main():
         "subfinder": (f"subfinder -d {domain} -all -silent", ["subfinder"]),
         #"amass": (f"amass enum -passive -d {domain}", ["amass"]),
         "assetfinder": (f"assetfinder --subs-only {domain}", ["assetfinder"]),
-        "sublist3r": (f"sublist3r.py -d {domain}", ["python", "sublist3r"]),
+        "sublist3r": (f"sublist3r -d {domain}", ["python", "sublist3r"]),
     }
     available_tools = []
     all_subdomains = set()
